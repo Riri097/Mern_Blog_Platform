@@ -49,3 +49,13 @@ This project is a Blog Platform built with the MERN stack (MongoDB, Express, Rea
 |------------------|--------|--------------------|--------------------------------------------------|
 | `/api/users`      | POST   | Register a new user | `{ "name": "John", "email": "j@test.com", "password": "123" }` |
 | `/api/users/login`| POST   | Login & Get Token   | `{ "email": "j@test.com", "password": "123" }` |
+
+## Blog API Usage
+
+### Blog Posts
+
+| Endpoint           | Method | Description                 | Request Body |
+|-------------------|--------|-----------------------------|--------------|
+| `/api/posts`       | GET    | Get all blog posts          | — |
+| `/api/posts`       | POST   | Create a new blog post      | `{ "title": "My Post", "content": "Post content" }` |
+| `/api/posts/:slug` | GET    | Get single post by slug     | — |
