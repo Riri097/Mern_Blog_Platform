@@ -18,8 +18,11 @@ const getPost = asyncHandler(async (req, res) => {
 
 // Get all blogs
 const getPosts = asyncHandler(async (req, res) => {
-    const blogs = await blogService.getAllBlogs();
-    res.status(200).json(blogs);
+    const { page, limit } = req.query;
+
+    const data = await blogService.getAllBlogs(page, limit);
+    
+    res.status(200).json(data);
 });
 
 module.exports = {

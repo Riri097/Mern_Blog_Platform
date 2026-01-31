@@ -34,8 +34,28 @@ const getBlogBySlug = async (slug) => {
     return blog;
 };
 
-const getAllBlogs = async () => {
-    return await Blog.find({}).populate('user', 'name');
+const getAllBlogs = async (queryPage, queryLimit) => {
+    const page = Number(queryPage) || 1;
+    const limit = Number(queryLimit) || 5;
+    const skip = (page - 1) * limit;
+
+    const blogs = await Blog.find({})
+    .populate('user', 'name email')
+    .skip(skip)
+    .limit(limit)
+    .sort({ createdAt: -1 });
+
+    const total = await Blog.countDocuments({});
+
+     return {
+        blogs,
+        pagination: {
+            currentPage: page,
+            totalPages: Math.ceil(total / limit),
+            totalPosts: total,
+            perPage: limit
+        }
+    };
 };
 
 module.exports = {
