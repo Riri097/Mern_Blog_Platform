@@ -27,7 +27,7 @@ This project is a Blog Platform built with the MERN stack (MongoDB, Express, Rea
    ```bash
    npm install
    ```
-# Packages used: express, mongoose, dotenv, jsonwebtoken, bcryptjs, cors
+# Core packages used: express, mongoose, dotenv, jsonwebtoken, bcryptjs, cors
 
 3. Create a `.env` file in the `backend` folder with the following variables:
    ```env
@@ -41,3 +41,11 @@ This project is a Blog Platform built with the MERN stack (MongoDB, Express, Rea
    npm run dev
    ```
 
+## API Usage Examples
+
+### Authentication Module
+
+| Endpoint          | Method | Description          | Request Body                                      |
+|------------------|--------|--------------------|--------------------------------------------------|
+| `/api/users`      | POST   | Register a new user | `{ "name": "John", "email": "j@test.com", "password": "123" }` |
+| `/api/users/login`| POST   | Login & Get Token   | `{ "email": "j@test.com", "password": "123" }` |
