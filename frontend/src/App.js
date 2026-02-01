@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import { useAuth } from './hooks/useAuth';
 
 function App() {
+  const { user, logout, loading } = useAuth();
+
+  if (loading) return <div className="text-center mt-20">Loading...</div>;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="min-h-screen bg-gray-100">
+        <Header user={user} logout={logout} />
+        <main className="container mx-auto p-4">
+          <Routes>
+            <Route path="/" element={<h1 className="text-3xl text-center">Welcome to the Blog</h1>} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 
