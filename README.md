@@ -36,10 +36,26 @@ This project is a Blog Platform built with the MERN stack (MongoDB, Express, Rea
    JWT_SECRET=your_jwt_secret_key
    NODE_ENV=development
    ```
-4. Start server:
+4. Start backend:
    ```bash
    npm run dev
    ```
+
+### 2. Frontend Setup
+
+1. **Navigate to the frontend directory:**
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install axios react-router-dom
+   ```
+3. Start frontend:
+   ```bash
+   npm start
+   ```
+
 
 ## API Usage Examples
 
