@@ -5,6 +5,7 @@ const Header = ({ user, logout }) => {
     <header className="bg-gray-800 text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="text-xl font-bold">MERN Blog</Link>
+        
         <nav>
           {user ? (
             <div className="flex items-center gap-4">

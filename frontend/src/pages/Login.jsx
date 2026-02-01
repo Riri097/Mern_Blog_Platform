@@ -12,7 +12,7 @@ const Login = () => {
     e.preventDefault();
     try {
       await login(formData);
-      navigate('/'); // Redirect to home
+      navigate('/'); 
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
     }
@@ -37,7 +37,7 @@ const Login = () => {
           value={formData.password}
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         />
-        <button className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+        <button className="w-full bg-blue-900 text-white p-2 rounded hover:bg-blue-700">
           Login
         </button>
       </form>

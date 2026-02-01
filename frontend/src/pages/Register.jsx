@@ -44,7 +44,7 @@ const Register = () => {
           value={formData.password}
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         />
-        <button className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+        <button className="w-full bg-blue-900 text-white p-2 rounded hover:bg-blue-700">
           Sign Up
         </button>
       </form>
