@@ -4,7 +4,7 @@ const blogService = require('../services/blogService');
 // Create a new blog
 const createPost = asyncHandler(async (req, res) => {
     
-    const userId = req.user ? req.user.id : req.body.userId; 
+    const userId = req.user._id;
     
     const blog = await blogService.createBlog(req.body, userId);
     res.status(201).json(blog);
@@ -19,8 +19,10 @@ const getPost = asyncHandler(async (req, res) => {
 // Get all blogs
 const getPosts = asyncHandler(async (req, res) => {
     const { page, limit } = req.query;
+    
+    const isAdminView = false; 
 
-    const data = await blogService.getAllBlogs(page, limit);
+    const data = await blogService.getAllBlogs(page, limit, isAdminView);
     
     res.status(200).json(data);
 });

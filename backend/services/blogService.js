@@ -1,8 +1,9 @@
 const Blog = require('../models/Blog');
 const generateSlug = require('../utils/slugUtils');
+const paginate = require('../utils/paginationUtils'); 
 
 const createBlog = async (blogData, userId) => {
-    const { title, content, category, image } = blogData;
+    const { title, content, category, image, isPublished  } = blogData;
 
     // Generate Slug manually
     let slug = generateSlug(title);
@@ -21,7 +22,8 @@ const createBlog = async (blogData, userId) => {
         slug,
         category,
         content,
-        image
+        image,
+        isPublished: isPublished !== undefined ? isPublished : true
     });
     return blog;
 };
@@ -34,26 +36,26 @@ const getBlogBySlug = async (slug) => {
     return blog;
 };
 
-const getAllBlogs = async (queryPage, queryLimit) => {
-    const page = Number(queryPage) || 1;
-    const limit = Number(queryLimit) || 5;
-    const skip = (page - 1) * limit;
+const getAllBlogs = async (page, limit, isAdmin = false) => {
+    const { skip, limit: perPage, currentPage } = getPagination(page, limit);
 
-    const blogs = await Blog.find({})
-    .populate('user', 'name email')
-    .skip(skip)
-    .limit(limit)
-    .sort({ createdAt: -1 });
+    const filter = isAdmin ? {} : { isPublished: true };
 
-    const total = await Blog.countDocuments({});
+    const blogs = await Blog.find(filter)
+        .populate('user', 'name')
+        .skip(skip)
+        .limit(perPage)
+        .sort({ createdAt: -1 });
 
-     return {
+    const total = await Blog.countDocuments(filter);
+
+    return {
         blogs,
         pagination: {
-            currentPage: page,
-            totalPages: Math.ceil(total / limit),
+            currentPage,
+            totalPages: Math.ceil(total / perPage),
             totalPosts: total,
-            perPage: limit
+            perPage
         }
     };
 };
