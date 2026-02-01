@@ -54,8 +54,8 @@ This project is a Blog Platform built with the MERN stack (MongoDB, Express, Rea
 
 ### Blog Posts
 
-| Endpoint           | Method | Description                 | Request Body |
-|-------------------|--------|-----------------------------|--------------|
-| `/api/posts`       | GET    | Get all blog posts          | — |
-| `/api/posts`       | POST   | Create a new blog post      | `{ "title": "My Post", "content": "Post content" }` |
-| `/api/posts/:slug` | GET    | Get single post by slug     | — |
+| Endpoint            | Method | Access      | Description                         | Request Body |
+|-------------------- |--------|------------ |-------------------------------------|--------------|
+| `/api/posts`        | GET    | Public      | Get all published blog posts        | — |
+| `/api/posts`        | POST   | Admin only  | Create a new blog post              | `{ "title": "Your Title", "content": "Post content", "image": "base64" }` |
+| `/api/posts/:slug`  | GET    | Public      | Get a single published post by slug | — |
