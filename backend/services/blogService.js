@@ -1,6 +1,6 @@
 const Blog = require('../models/Blog');
 const generateSlug = require('../utils/slugUtils');
-const paginate = require('../utils/paginationUtils'); 
+const getPagination = require('../utils/paginationUtils'); 
 
 const createBlog = async (blogData, userId) => {
     const { title, content, category, image, isPublished  } = blogData;
@@ -29,8 +29,11 @@ const createBlog = async (blogData, userId) => {
 };
 
 const getBlogBySlug = async (slug) => {
-    const blog = await Blog.findOne({ slug }).populate('user', 'name email');
+    // trimming the slug just in case of whitespace
+    const cleanSlug = slug.trim();
+    const blog = await Blog.findOne({ slug: cleanSlug }).populate('user', 'name email');
     if (!blog) {
+        console.log("Blog not found in DB"); 
         throw new Error('Blog not found');
     }
     return blog;
