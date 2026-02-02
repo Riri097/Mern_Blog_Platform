@@ -1,38 +1,60 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import Header from './components/Header';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Home from './pages/Home'; 
-import CreateBlog from './pages/CreateBlog'; 
-import SingleBlog from './pages/SingleBlog'; 
+import Home from './pages/Home';
+import CreateBlog from './pages/CreateBlog';
+import SingleBlog from './pages/SingleBlog';
+import AdminDashboard from './pages/AdminDashboard';
 import { useAuth } from './hooks/useAuth';
 
-function App() {
-  const { user, logout, loading } = useAuth();
+const Layout = ({ children }) => {
+  const location = useLocation();
+  const hideHeader = location.pathname.startsWith('/admin') || location.pathname === '/create-blog';
+  const { user, logout } = useAuth(); 
+  
+  return (
+    <>
+      {!hideHeader && <Header user={user} logout={logout} />}
+      {children}
+    </>
+  );
+};
 
-  if (loading) return <div className="text-center mt-20 font-bold">Loading...</div>;
+function App() {
+  const { user, loading } = useAuth();
+
+  if (loading) return <div className="text-center mt-20">Loading...</div>;
 
   return (
     <Router>
       <div className="min-h-screen bg-gray-100 font-sans text-gray-900 pb-10">
-        <Header user={user} logout={logout} />
+        <ToastContainer position="top-right" autoClose={3000} />
         
-        <main className="container mx-auto p-4">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            
-            <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
-            <Route path="/register" element={!user ? <Register /> : <Navigate to="/" />} />
-            
-            <Route 
-              path="/create-blog" 
-              element={user && user.role === 'admin' ? <CreateBlog /> : <Navigate to="/" />} 
-            />
-            <Route path="/blog/:slug" element={<SingleBlog />} />
+        <Layout>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+              <Route path="/register" element={!user ? <Register /> : <Navigate to="/" />} />
+              <Route path="/blog/:slug" element={<SingleBlog />} />
+              
+              {/* Admin Routes */}
+              <Route 
+                path="/create-blog" 
+                element={user && user.role === 'admin' ? <CreateBlog /> : <Navigate to="/" />} 
+              />
+              <Route 
+                path="/admin/dashboard" 
+                element={user && user.role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} 
+              />
 
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </main>
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+        </Layout>
       </div>
     </Router>
   );

@@ -27,7 +27,7 @@ This project is a Blog Platform built with the MERN stack (MongoDB, Express, Rea
    ```bash
    npm install
    ```
-# Core packages used: express, mongoose, dotenv, jsonwebtoken, bcryptjs, cors
+# Core packages used: express, mongoose, dotenv, jsonwebtoken, bcryptjs, cors 
 
 3. Create a `.env` file in the `backend` folder with the following variables:
    ```env
@@ -50,6 +50,8 @@ This project is a Blog Platform built with the MERN stack (MongoDB, Express, Rea
 2. Install dependencies:
    ```bash
    npm install axios react-router-dom
+   npm install react-toastify
+   npm install react-icons
    ```
 3. Start frontend:
    ```bash

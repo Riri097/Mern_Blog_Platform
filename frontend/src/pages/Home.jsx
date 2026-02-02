@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import blogService from '../services/blogService';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { toast } from 'react-toastify';
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
@@ -8,6 +10,8 @@ const Home = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  const { user } = useAuth();
+  const navigate = useNavigate();
   useEffect(() => {
     fetchBlogs();
     // eslint-disable-next-line
@@ -16,21 +20,24 @@ const Home = () => {
   const fetchBlogs = async () => {
     setLoading(true);
     try {
-      const data = await blogService.getBlogs(page);
-      if (data && data.blogs) {
-        setBlogs(data.blogs);
-        setTotalPages(data.pagination.totalPages);
-      } else {
-        setBlogs([]); 
-      }
-    } catch (error) {
-      console.error('Failed to fetch blogs:', error);
-      setBlogs([]); 
-    } finally {
-      setLoading(false);
-    }
+        const data = await blogService.getBlogs(page);
+        if(data && data.blogs) {
+            setBlogs(data.blogs);
+            setTotalPages(data.pagination.totalPages);
+        } else { setBlogs([]); }
+    } 
+    catch (err) { setBlogs([]); }
+    finally { setLoading(false); }
   };
 
+  const handleReadMore = (slug) => {
+    if (!user) {
+      toast.error('You must be logged in to read full articles!');
+      navigate('/login');
+    } else {
+      navigate(`/blog/${slug}`);
+    }
+  };
   if (loading) return <div className="text-center mt-10">Loading blogs...</div>;
 
   return (
@@ -52,9 +59,12 @@ const Home = () => {
               </p>
               <p className="text-gray-700 mb-4">{blog.content.substring(0, 150)}...</p>
               
-              <Link to={`/blog/${blog.slug}`} className="text-blue-600 font-semibold hover:underline">
+              <button 
+                onClick={() => handleReadMore(blog.slug)}
+                className="mt-auto self-start text-blue-600 font-bold hover:underline"
+              >
                 Read More →
-              </Link>
+              </button>
             </div>
           ))}
         </div>
