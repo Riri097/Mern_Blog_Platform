@@ -3,7 +3,7 @@ const Header = ({ user, logout }) => {
   return (
     <header className="bg-gray-900 text-white shadow-md p-4 sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold tracking-wide">MERN Blog</Link>
+        <Link to="/" className="text-2xl font-bold tracking-wide">BLOG PLATFORM</Link>
         <nav>
           {user ? (
             <div className="flex items-center gap-6">

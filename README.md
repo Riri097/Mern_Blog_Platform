@@ -82,3 +82,8 @@ This project is a Blog Platform built with the MERN stack (MongoDB, Express, Rea
 | `/api/blogs/id/:id`    | PUT    | Admin only  | Update a blog post by ID                      | `{ "title": "Updated...", "isPublished": false }` |
 | `/api/blogs/id/:id`    | DELETE | Admin only  | Delete a blog post by ID                      | — |
 
+## Tech Stack
+
+**Frontend:** React, TailwindCSS, React Router, Axios  
+**Backend:** Node.js, Express, MongoDB, Mongoose  
+**Authentication:** JWT (jsonwebtoken, bcryptjs)

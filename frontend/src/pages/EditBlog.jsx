@@ -84,7 +84,7 @@ const EditBlog = () => {
         </div>
 
         <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">✏️ Edit Post</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-6">Edit Post</h1>
             
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>

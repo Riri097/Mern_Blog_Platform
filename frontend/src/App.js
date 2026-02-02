@@ -8,7 +8,7 @@ import Register from './pages/Register';
 import Home from './pages/Home';
 import AdminLayout from './components/AdminLayout';
 import CreateBlog from './pages/CreateBlog';
-import SingleBlog from './pages/SingleBlog';
+import SingleBlog from './pages/BlogDetail';
 import AdminDashboard from './pages/AdminDashboard';
 import { useAuth } from './hooks/useAuth';
 import EditBlog from './pages/EditBlog';
