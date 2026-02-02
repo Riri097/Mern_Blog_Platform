@@ -74,10 +74,11 @@ This project is a Blog Platform built with the MERN stack (MongoDB, Express, Rea
 
 | Endpoint               | Method | Access      | Description                                   | Request Body |
 |----------------------- |--------|------------ |-----------------------------------------------|--------------|
-| `/api/posts`           | GET    | Public      | Get all published blog posts                  | — |
-| `/api/posts`           | POST   | Admin only  | Create a new blog post                        | `{ "title": "Your Title", "content": "Post content", "image": "base64" }` |
-| `/api/posts/admin`     | GET    | Admin only  | Get all blog posts (published + drafts)       | — |
-| `/api/posts/:slug`     | GET    | Public      | Get a single published post by slug           | — |
-| `/api/posts/id/:id`    | PUT    | Admin only  | Update a blog post by ID                      | `{ "title": "Updated title", "content": "Updated content" }` |
-| `/api/posts/id/:id`    | DELETE | Admin only  | Delete a blog post by ID                      | — |
+| `/api/blogs`           | GET    | Public      | Get all published blog posts                  | — |
+| `/api/blogs`           | POST   | Admin only  | Create a new blog post                        | `{ "title": "...", "content": "...", "category": "Tech", "image": "base64", "isPublished": true }` |
+| `/api/blogs/admin`     | GET    | Admin only  | Get all blog posts (published + drafts)       | — |
+| `/api/blogs/:slug`     | GET    | Public      | Get a single published post by slug           | — |
+| `/api/blogs/id/:id`    | GET    | Admin only  | Get a single post by ID (for Edit Page)       | — |
+| `/api/blogs/id/:id`    | PUT    | Admin only  | Update a blog post by ID                      | `{ "title": "Updated...", "isPublished": false }` |
+| `/api/blogs/id/:id`    | DELETE | Admin only  | Delete a blog post by ID                      | — |
 

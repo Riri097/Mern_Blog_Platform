@@ -20,6 +20,11 @@ const getBlogBySlug = async (slug) => {
     return response.data;
 };
 
+const getBlogById = async (id) => {
+    const response = await api.get(`/blogs/id/${id}?t=${new Date().getTime()}`);
+    return response.data;
+};
+
 const deleteBlog = async (id) => {
     const response = await api.delete(`/blogs/id/${id}`);
     return response.data;
@@ -30,5 +35,5 @@ const updateBlog = async (id, blogData) => {
     return response.data;
 };
 
-const blogService = { getAdminBlogs, getBlogs, createBlog, getBlogBySlug, deleteBlog, updateBlog };
+const blogService = { getAdminBlogs, getBlogs, createBlog, getBlogBySlug, getBlogById, deleteBlog, updateBlog };
 export default blogService;

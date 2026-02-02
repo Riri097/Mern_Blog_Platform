@@ -1,21 +1,20 @@
 const Blog = require('../models/Blog');
 const generateSlug = require('../utils/slugUtils');
-const getPagination = require('../utils/paginationUtils'); 
+const getPagination = require('../utils/paginationUtils');
 
+// Create Blog
 const createBlog = async (blogData, userId) => {
-    const { title, content, category, image, isPublished  } = blogData;
-    // Generate Slug manually
-    let slug = generateSlug(title);
+    const { title, content, category, image, isPublished } = blogData;
 
-    // Check strict uniqueness (Simple logic: if exists, throw error or append random num)
-    // For this task, we will throw an error to keep it strict
+    // Generate slug manually
+    const slug = generateSlug(title);
+
+    // Strict slug uniqueness check
     const slugExists = await Blog.findOne({ slug });
     if (slugExists) {
         throw new Error('Blog with this title already exists. Please change the title.');
     }
 
-    const finalIsPublished = isPublished === false ? false : true;
-    // Create Blog
     const blog = await Blog.create({
         user: userId,
         title,
@@ -23,22 +22,27 @@ const createBlog = async (blogData, userId) => {
         category,
         content,
         image: image || "",
-        isPublished: finalIsPublished, 
+        isPublished: isPublished === false ? false : true,
     });
+
     return blog;
 };
 
+// Get Blog by Slug
 const getBlogBySlug = async (slug) => {
-    // trimming the slug just in case of whitespace
     const cleanSlug = slug.trim();
-    const blog = await Blog.findOne({ slug: cleanSlug }).populate('user', 'name email');
+
+    const blog = await Blog.findOne({ slug: cleanSlug })
+        .populate('user', 'name email');
+
     if (!blog) {
-        console.log("Blog not found in DB"); 
         throw new Error('Blog not found');
     }
+
     return blog;
 };
 
+// Get All Blogs with Pagination
 const getAllBlogs = async (page, limit, isAdmin = false) => {
     const { skip, limit: perPage, currentPage } = getPagination(page, limit);
 
@@ -46,9 +50,9 @@ const getAllBlogs = async (page, limit, isAdmin = false) => {
 
     const blogs = await Blog.find(filter)
         .populate('user', 'name')
+        .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(perPage)
-        .sort({ createdAt: -1 });
+        .limit(perPage);
 
     const total = await Blog.countDocuments(filter);
 
@@ -56,27 +60,43 @@ const getAllBlogs = async (page, limit, isAdmin = false) => {
         blogs,
         pagination: {
             currentPage,
-            totalPages: Math.ceil(total / perPage),
+            perPage,
             totalPosts: total,
-            perPage
-        }
+            totalPages: Math.ceil(total / perPage),
+        },
     };
 };
 
+// Get Blog by ID
+const getBlogById = async (id) => {
+    const blog = await Blog.findById(id);
+    if (!blog) {
+        throw new Error('Blog not found');
+    }
+    return blog;
+};
+
+// Update Blog
 const updateBlog = async (id, blogData) => {
     const blog = await Blog.findByIdAndUpdate(id, blogData, {
         new: true,
         runValidators: true,
     });
 
-    if (!blog) throw new Error('Blog not found');
+    if (!blog) {
+        throw new Error('Blog not found');
+    }
+
     return blog;
 };
 
+// Delete Blog
 const deleteBlog = async (id) => {
     const blog = await Blog.findById(id);
-    if (!blog) throw new Error('Blog not found');
-    
+    if (!blog) {
+        throw new Error('Blog not found');
+    }
+
     await blog.deleteOne();
     return { message: 'Blog removed' };
 };
@@ -85,6 +105,7 @@ module.exports = {
     createBlog,
     getBlogBySlug,
     getAllBlogs,
+    getBlogById,
     updateBlog,
     deleteBlog,
 };

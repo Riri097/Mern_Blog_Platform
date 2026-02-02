@@ -1,14 +1,13 @@
+
 import { useEffect, useState } from 'react';
 import blogService from '../services/blogService';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useAuth } from '../hooks/useAuth';
-import { FaPen, FaGlobe, FaSignOutAlt, FaEdit, FaTrash, FaCheckCircle, FaFileAlt, FaLayerGroup } from 'react-icons/fa';
+import { FaPen, FaEdit, FaTrash, } from 'react-icons/fa';
 
 const AdminDashboard = () => {
   const [blogs, setBlogs] = useState([]);
   const [filter, setFilter] = useState('all'); 
-  const { logout, user } = useAuth(); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,10 +24,10 @@ const AdminDashboard = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this post? This cannot be undone.")) {
+    if (window.confirm("Are you sure you want to delete this post?")) {
       try {
         await blogService.deleteBlog(id);
-        toast.success("Post deleted successfully");
+        toast.success("Post deleted");
         setBlogs(blogs.filter(blog => blog._id !== id));
       } catch (error) {
         toast.error("Failed to delete post");
@@ -36,13 +35,17 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-    toast.info("Logged out successfully");
+  // 🔹 KEY CHANGE: Navigate to the INTERNAL admin view route
+  const handleRowClick = (slug) => {
+    navigate(`/admin/view-blog/${slug}`);
   };
 
-  // Filter Logic
+  const handleActionClick = (e, action, id) => {
+    e.stopPropagation(); 
+    if(action === 'edit') navigate(`/admin/edit-blog/${id}`);
+    if(action === 'delete') handleDelete(id);
+  };
+
   const filteredBlogs = blogs.filter(blog => {
     if (filter === 'draft') return blog.isPublished === false;
     if (filter === 'published') return blog.isPublished === true;
@@ -50,111 +53,58 @@ const AdminDashboard = () => {
   });
 
   return (
-    <div className="flex min-h-screen bg-gray-100 font-sans">
-      {/* 🔹 SIDEBAR */}
-      <aside className="w-64 bg-gray-900 text-white flex flex-col shadow-xl hidden md:flex sticky top-0 h-screen">
-        <div className="p-6 text-center border-b border-gray-800">
-          <h2 className="text-xl font-bold tracking-wider uppercase">Admin Panel</h2>
-          <p className="text-gray-500 text-xs mt-1">{user?.name}</p>
-        </div>
-        
-        <nav className="flex-1 p-4 space-y-2">
-          {/* Filter Tabs */}
-          <button 
-            onClick={() => setFilter('all')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded transition ${filter === 'all' ? 'bg-gray-800 text-white border-l-4 border-blue-500' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
-          >
-             <FaLayerGroup /> All Posts
-          </button>
-           <button 
-            onClick={() => setFilter('published')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded transition ${filter === 'published' ? 'bg-gray-800 text-white border-l-4 border-green-500' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
-          >
-             <FaCheckCircle /> Published
-          </button>
-           <button 
-            onClick={() => setFilter('draft')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded transition ${filter === 'draft' ? 'bg-gray-800 text-white border-l-4 border-gray-500' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
-          >
-             <FaFileAlt /> Drafts
-          </button>
-
-          <div className="pt-6 border-t border-gray-800 mt-6">
-            <Link to="/create-blog" className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded transition">
-               <FaPen /> Create New Post
-            </Link>
-            <Link to="/" className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded transition">
-               <FaGlobe /> View Live Site
-            </Link>
-          </div>
-        </nav>
-
-        <div className="p-4 border-t border-gray-800">
-           <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 py-2 rounded text-sm font-bold transition">
-             <FaSignOutAlt /> Logout
-           </button>
-        </div>
-      </aside>
-
-      {/* 🔹 MAIN CONTENT */}
-      <main className="flex-1 p-8 overflow-y-auto h-screen">
-         <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">
-              {filter === 'all' ? 'All Posts' : filter === 'draft' ? 'Drafts' : 'Published Posts'}
-            </h1>
-            <Link to="/create-blog" className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded shadow-md transition flex items-center gap-2">
+    <div className="max-w-7xl mx-auto">
+         {/* Title Area */}
+         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+                <p className="text-gray-500 mt-1">Manage posts</p>
+            </div>
+            {/* Filters */}
+            <div className="flex bg-white p-1 rounded-lg shadow-sm border">
+                <button onClick={() => setFilter('all')} className={`px-4 py-2 rounded-md text-sm font-bold ${filter === 'all' ? 'bg-gray-800 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>All</button>
+                <button onClick={() => setFilter('published')} className={`px-4 py-2 rounded-md text-sm font-bold ${filter === 'published' ? 'bg-green-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>Published</button>
+                <button onClick={() => setFilter('draft')} className={`px-4 py-2 rounded-md text-sm font-bold ${filter === 'draft' ? 'bg-gray-500 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>Drafts</button>
+            </div>
+            <Link to="/create-blog" className="bg-blue-600 text-white px-5 py-2.5 rounded shadow flex items-center gap-2 hover:bg-blue-700 font-bold">
                <FaPen size={12}/> New Post
             </Link>
          </div>
 
+         {/* Table */}
          <div className="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
             <table className="w-full text-left border-collapse">
-               <thead className="bg-gray-50 text-gray-600 uppercase text-xs font-bold tracking-wider">
+               <thead className="bg-gray-50 text-gray-600 uppercase text-xs font-bold">
                   <tr>
-                     <th className="p-4 border-b">Blog Title</th>
+                     <th className="p-4 border-b">Title</th>
                      <th className="p-4 border-b text-center">Status</th>
                      <th className="p-4 border-b text-center">Date</th>
                      <th className="p-4 border-b text-center">Actions</th>
                   </tr>
                </thead>
                <tbody className="divide-y divide-gray-100">
-                  {filteredBlogs.length === 0 ? (
-                      <tr><td colSpan="4" className="p-8 text-center text-gray-500 italic">No posts found in this category.</td></tr>
-                  ) : (
-                      filteredBlogs.map((blog) => (
-                         <tr key={blog._id} className="hover:bg-gray-50 transition">
-                            <td className="p-4 font-medium text-gray-800">{blog.title}</td>
-                            <td className="p-4 text-center">
-                               {blog.isPublished ? (
-                                   <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-bold">Published</span>
-                               ) : (
-                                   <span className="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full font-bold">Draft</span>
-                               )}
-                            </td>
-                            <td className="p-4 text-center text-gray-500 text-sm">
-                               {new Date(blog.createdAt).toLocaleDateString()}
-                            </td>
-                            <td className="p-4 text-center">
-                               <div className="flex justify-center gap-4">
-                                  <button className="text-blue-500 hover:text-blue-700 transition" title="Edit">
-                                     <FaEdit size={18} />
-                                  </button>
-                                  <button 
-                                     onClick={() => handleDelete(blog._id)}
-                                     className="text-red-500 hover:text-red-700 transition"
-                                     title="Delete"
-                                  >
-                                     <FaTrash size={18} />
-                                  </button>
-                               </div>
-                            </td>
-                         </tr>
-                      ))
-                  )}
+                  {filteredBlogs.map((blog) => (
+                     <tr 
+                        key={blog._id} 
+                        onClick={() => handleRowClick(blog.slug)} // <--- This now opens sidebar view
+                        className="hover:bg-blue-50 transition cursor-pointer group"
+                     >
+                        <td className="p-4 font-medium text-gray-800 group-hover:text-blue-600">{blog.title}</td>
+                        <td className="p-4 text-center">
+                           {blog.isPublished ? <span className="text-green-600 text-xs font-bold bg-green-100 px-2 py-1 rounded">Published</span> : <span className="text-gray-600 text-xs font-bold bg-gray-200 px-2 py-1 rounded">Draft</span>}
+                        </td>
+                        <td className="p-4 text-center text-gray-500 text-sm">{new Date(blog.createdAt).toLocaleDateString()}</td>
+                        <td className="p-4 text-center">
+                           <div className="flex justify-center gap-4">
+                              <button onClick={(e) => handleActionClick(e, 'edit', blog._id)} className="text-blue-500 hover:text-blue-700 p-2"><FaEdit size={18} /></button>
+                              <button onClick={(e) => handleActionClick(e, 'delete', blog._id)} className="text-red-500 hover:text-red-700 p-2"><FaTrash size={18} /></button>
+                           </div>
+                        </td>
+                     </tr>
+                  ))}
                </tbody>
             </table>
          </div>
-      </main>
     </div>
   );
 };

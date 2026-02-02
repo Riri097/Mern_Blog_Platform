@@ -6,19 +6,21 @@ import Header from './components/Header';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import AdminLayout from './components/AdminLayout';
 import CreateBlog from './pages/CreateBlog';
 import SingleBlog from './pages/SingleBlog';
 import AdminDashboard from './pages/AdminDashboard';
 import { useAuth } from './hooks/useAuth';
+import EditBlog from './pages/EditBlog';
 
 const Layout = ({ children }) => {
   const location = useLocation();
-  const hideHeader = location.pathname.startsWith('/admin') || location.pathname === '/create-blog';
-  const { user, logout } = useAuth(); 
-  
+  const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname === '/create-blog';
+  const { user, logout } = useAuth();
+
   return (
     <>
-      {!hideHeader && <Header user={user} logout={logout} />}
+      {!isAdminRoute && <Header user={user} logout={logout} />}
       {children}
     </>
   );
@@ -27,12 +29,17 @@ const Layout = ({ children }) => {
 function App() {
   const { user, loading } = useAuth();
 
-  if (loading) return <div className="text-center mt-20">Loading...</div>;
-
+  if (loading) {
+     return (
+       <div className="flex items-center justify-center min-h-screen bg-gray-100">
+          <div className="text-xl font-semibold text-gray-600">Loading App...</div>
+       </div>
+     );
+  }
   return (
     <Router>
       <div className="min-h-screen bg-gray-100 font-sans text-gray-900 pb-10">
-        <ToastContainer position="top-right" autoClose={3000} />
+        <ToastContainer position="bottom-right" autoClose={3000} />
         
         <Layout>
             <Routes>
@@ -43,16 +50,17 @@ function App() {
               <Route path="/blog/:slug" element={<SingleBlog />} />
               
               {/* Admin Routes */}
-              <Route 
-                path="/create-blog" 
-                element={user && user.role === 'admin' ? <CreateBlog /> : <Navigate to="/" />} 
-              />
-              <Route 
-                path="/admin/dashboard" 
-                element={user && user.role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} 
-              />
+               {user && user.role === 'admin' ? (
+                 <Route element={<AdminLayout />}>
+                    <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                    <Route path="/create-blog" element={<CreateBlog />} />
+                    <Route path="/admin/edit-blog/:id" element={<EditBlog />} />
 
-              <Route path="*" element={<Navigate to="/" />} />
+                    <Route path="/admin/view-blog/:slug" element={<SingleBlog />} /> 
+                 </Route>
+              ) : (
+                 <Route path="/admin/*" element={<Navigate to="/" />} />
+              )}
             </Routes>
         </Layout>
       </div>

@@ -4,9 +4,22 @@ import authService from '../services/authService';
 export const useAuth = () => {
     const [user, setUser] = useState(null);
 
+    const [loading, setLoading] = useState(true); 
+
     useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        if (storedUser) setUser(storedUser);
+        const checkUser = async () => {
+            try {
+                const storedUser = localStorage.getItem('user');
+                if (storedUser) {
+                    setUser(JSON.parse(storedUser));
+                }
+            } catch (error) {
+                console.error("Auth check failed", error);
+            } finally {
+                setLoading(false); 
+            }
+        };
+        checkUser();
     }, []);
 
     const login = async (data) => {
@@ -26,5 +39,5 @@ export const useAuth = () => {
         setUser(null);
     };
 
-    return { user, login, register, logout };
+    return { user, loading, login, register, logout }; 
 };

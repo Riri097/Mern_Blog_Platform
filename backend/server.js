@@ -1,30 +1,29 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const cors = require('cors');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const blogRoutes = require('./routes/blogRoutes');
 
 dotenv.config();
-
-connectDB(); // Connect to MongoDB
+connectDB();
 
 const app = express();
 
-// Middleware to parse JSON
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// CORS
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 
+// BODY PARSER (2MB to allow 1MB image + Base64 overhead)
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ limit: '2mb', extended: true }));
+
+// ROUTES
 app.use('/api/users', userRoutes);
 app.use('/api/blogs', blogRoutes);
 
-app.get('/', (req, res) => {
-    res.send('API is running...');
-});
-
-// Global Error Handler
+// ERROR HANDLER
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
