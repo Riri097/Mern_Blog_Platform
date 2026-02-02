@@ -4,7 +4,6 @@ const getPagination = require('../utils/paginationUtils');
 
 const createBlog = async (blogData, userId) => {
     const { title, content, category, image, isPublished  } = blogData;
-
     // Generate Slug manually
     let slug = generateSlug(title);
 
@@ -15,6 +14,7 @@ const createBlog = async (blogData, userId) => {
         throw new Error('Blog with this title already exists. Please change the title.');
     }
 
+    const finalIsPublished = isPublished === false ? false : true;
     // Create Blog
     const blog = await Blog.create({
         user: userId,
@@ -22,8 +22,8 @@ const createBlog = async (blogData, userId) => {
         slug,
         category,
         content,
-        image,
-        isPublished: isPublished !== undefined ? isPublished : true
+        image: image || "",
+        isPublished: finalIsPublished, 
     });
     return blog;
 };
@@ -63,8 +63,28 @@ const getAllBlogs = async (page, limit, isAdmin = false) => {
     };
 };
 
+const updateBlog = async (id, blogData) => {
+    const blog = await Blog.findByIdAndUpdate(id, blogData, {
+        new: true,
+        runValidators: true,
+    });
+
+    if (!blog) throw new Error('Blog not found');
+    return blog;
+};
+
+const deleteBlog = async (id) => {
+    const blog = await Blog.findById(id);
+    if (!blog) throw new Error('Blog not found');
+    
+    await blog.deleteOne();
+    return { message: 'Blog removed' };
+};
+
 module.exports = {
     createBlog,
     getBlogBySlug,
     getAllBlogs,
+    updateBlog,
+    deleteBlog,
 };

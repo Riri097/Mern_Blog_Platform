@@ -7,7 +7,7 @@ import { FaPen, FaGlobe, FaSignOutAlt, FaEdit, FaTrash, FaCheckCircle, FaFileAlt
 
 const AdminDashboard = () => {
   const [blogs, setBlogs] = useState([]);
-  const [filter, setFilter] = useState('all'); // 'all', 'draft', 'published'
+  const [filter, setFilter] = useState('all'); 
   const { logout, user } = useAuth(); 
   const navigate = useNavigate();
 
@@ -17,14 +17,24 @@ const AdminDashboard = () => {
 
   const fetchBlogs = async () => {
     try {
-      const data = await blogService.getBlogs(1); 
+      const data = await blogService.getAdminBlogs(); 
       if(data.blogs) setBlogs(data.blogs);
     } catch (error) {
       toast.error("Failed to load blogs");
     }
   };
 
-  const handleDelete = (id) => toast.info("Delete logic coming in next step!");
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this post? This cannot be undone.")) {
+      try {
+        await blogService.deleteBlog(id);
+        toast.success("Post deleted successfully");
+        setBlogs(blogs.filter(blog => blog._id !== id));
+      } catch (error) {
+        toast.error("Failed to delete post");
+      }
+    }
+  };
 
   const handleLogout = () => {
     logout();
