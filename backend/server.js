@@ -15,7 +15,7 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://your-frontend.onrender.com"
+    "https://mern-blog-platform-frontend.onrender.com"
   ],
   credentials: true
 }));
