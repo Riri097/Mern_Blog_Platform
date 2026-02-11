@@ -12,7 +12,13 @@ connectDB();
 const app = express();
 
 // CORS
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://your-frontend.onrender.com"
+  ],
+  credentials: true
+}));
 
 // BODY PARSER (2MB to allow 1MB image + Base64 overhead)
 app.use(express.json({ limit: '2mb' }));
